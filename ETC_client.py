@@ -8,7 +8,7 @@ remote_ip_port = ('192.168.1.10', 4002)
 server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # udp协议
 server.bind(local_ip_port)
 
-senddata = b"\x08\x00\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00\x00"
+senddata = b"\x08\x00\x00\x00\xc1\x01\x01\x00\x02\x00\x00\x00\x00"
 server.sendto(senddata,remote_ip_port)
 print(remote_ip_port)
 

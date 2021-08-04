@@ -24,7 +24,19 @@ class iVistaCan(socket.socket):
             "Parking_Cmd":b"\x00\x00\x00\x00\x00\x00\x00\x00"
         }   
 
-    def recvfrom_exe(self, bufsize, callback):
+    def __recvCallBack(self, data):
+        '''
+        接收信号的回调函数:（暂时只识别VCU_FeedBack的数据 id：0xC1）
+            在recvfrom_exe()中注册
+            data为以太网发来的can数据
+        '''
+        if data[4] == 193:          #第五个字节是0xc1
+            print(data[5], data[6])
+            temp = data[5]*(2**8)+data[6]
+            vel = temp/100
+            print("速度:"+ str(vel) + "km/h")
+
+    def recvfrom_exe(self, bufsize):
         '''
         以太网接收:
             写在单独的线程中
@@ -32,11 +44,11 @@ class iVistaCan(socket.socket):
             callbak:收到数据后的回调
         '''
         while True:
-
             data,client_addr = self.recvfrom(bufsize)
-            print(data , client_addr)
-            callback()
+            print(data.hex() , client_addr)
+            self.__recvCallBack(data)
             # return data,client_addr
+
 
     def canSend(self):
         '''
@@ -54,7 +66,7 @@ class iVistaCan(socket.socket):
         '''
         修改can发送中的data值:
             需要一帧一帧修改
-            与canSend()配合使用 建议使用线程锁以防止修改中同时发送造成数据错误
+            与canSend()配合使用 建议使用线程锁以防止修改中同时发送数据造成数据错误
             canIdName:str类型 can的id 与init中定义的相同 4字节 ie:"Gear_Shift_Cmd"
             canData:byte类型 can的数据 8字节
         '''

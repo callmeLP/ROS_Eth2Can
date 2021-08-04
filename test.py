@@ -3,8 +3,7 @@
 from iVista import *
 import threading
 
-def callback():
-    print("1")
+
 
 class sendThread(threading.Thread): 
     def __init__(self, server):
@@ -20,7 +19,7 @@ class recThread(threading.Thread):
         self.server = server
 
     def run(self):
-        self.server.recvfrom_exe(1024,callback)
+        self.server.recvfrom_exe(1024)
 
 
 if __name__ == "__main__":
